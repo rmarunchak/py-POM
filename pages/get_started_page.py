@@ -45,4 +45,33 @@ class GetStartedPage(BasePage):
     def click_continue(self):
         self.click(self.continue_button)
 
-    # ... (similarly define other methods as needed)
+    def click_promo_code_checkbox(self):
+        self.click(self.promo_code_checkbox)
+
+    def enter_promo_code(self, promo_code):
+        self.enter_text(self.promo_code_input, promo_code)
+
+    def get_registration_error_message(self):
+        return self.get_text(self.registration_error)
+
+    def verify_registration_error(self):
+        error_message = "This code isn't valid. Try a new code or clear the checkbox to continue."
+        assert self.get_registration_error_message() == error_message, (f"Expected '{error_message}' but"
+                                                                        f" got '{self.get_registration_error_message()}'")
+
+    def get_email_address_error(self):
+        return self.get_text(self.email_address_error)
+
+    def verify_email_address_error(self):
+        error_message = 'Please enter a valid email'
+        assert error_message in self.get_email_address_error(), (f"Expected error message to contain '{error_message}' "
+                                                                 f"but got '{self.get_email_address_error()}'")
+
+    def get_zip_code_error(self):
+        return self.get_text(self.zip_code_error)
+
+    def verify_zip_code_error(self):
+        error_message = 'Please enter a valid Zip code in one of the formats: ##### or #####-####'
+        assert error_message in self.get_zip_code_error(), (f"Expected error message to contain '{error_message}' but "
+                                                            f"got '{self.get_zip_code_error()}'")
+

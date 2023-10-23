@@ -24,29 +24,28 @@ class HealthEquityPage(BasePage):
     prefer_not_share_race_checkbox = (By.CSS_SELECTOR, '#prefernottoshare-race-checkbox')
     specify_other_race_input = (By.CSS_SELECTOR, '#other-race-text-input')
 
-    # Methods
-    def select_random_gender_radio(self):
+    def select_random_gender(self):
         gender_radios = [self.male_gender_radio, self.female_gender_radio, self.other_gender_radio]
-        random.choice(gender_radios).click()
+        self.click(random.choice(gender_radios))
 
     def select_random_ethnicity(self):
         ethnicities = [self.hispanic_ethnicity_radio, self.not_hispanic_ethnicity_radio,
                        self.prefer_not_share_ethnicity_radio]
-        random.choice(ethnicities).click()
+        self.click(random.choice(ethnicities))
 
     def select_random_race(self):
         races = [self.american_indian_race_checkbox, self.asian_race_checkbox,
-                 self.black_or_african_american_race_checkbox,
-                 self.native_hawaiian_race_checkbox, self.white_race_checkbox, self.other_race_checkbox,
-                 self.prefer_not_share_race_checkbox]
+                 self.black_or_african_american_race_checkbox, self.native_hawaiian_race_checkbox,
+                 self.white_race_checkbox, self.other_race_checkbox, self.prefer_not_share_race_checkbox]
         random_race = random.choice(races)
-        random_race.click()
+        self.click(random_race)
         if random_race == self.other_race_checkbox:
-            self.specify_other_race_input.send_keys("RandomRaceName")  # Replace with your random generation logic
+            self.enter_text(self.specify_other_race_input,
+                            "RandomRaceName")  # Replace with your random generation logic
 
     def select_gender(self, member):
         gender = member.lower() if isinstance(member, str) else member['gender'].lower()
-        self.driver.find_element(By.CSS_SELECTOR, f"#gender-{gender}-sex-radio").click()
+        self.click((By.CSS_SELECTOR, f"#gender-{gender}-sex-radio"))
 
-    def tap_next(self):
-        self.next_button.click()
+    def click_next(self):
+        self.click(self.next_button)

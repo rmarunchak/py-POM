@@ -59,8 +59,3 @@ class MemberFactory(factory.Factory):
     group_id = 1
     security_questions = List([SubFactory(SecurityQuestionFactory) for _ in range(3)])
     primary = True
-
-
-# Example usage:
-registration = MemberFactory()
-print(registration)

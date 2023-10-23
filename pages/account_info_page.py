@@ -52,5 +52,44 @@ class AccountInfoPage(BasePage):
     gender_dropdown = (By.XPATH, "//select[@id = 'gender']")
     go_to_my_homepage_button = (By.XPATH, "//button//h3[text()='go to my homepage']")
     terms_of_service_link = (By.XPATH, "//span[@class='custom-checkbox-label']/a[contains(text(), 'terms of service')]")
-    non_discrimination_link = (By.XPATH, "//span[@class='custom-checkbox-label']/a[contains(text(), 'notice of nondiscrimination')]")
-    privacy_practices_link = (By.XPATH, "//span[@class='custom-checkbox-label']/a[contains(text(), 'notice of privacy practices')]")
+    non_discrimination_link = (
+        By.XPATH, "//span[@class='custom-checkbox-label']/a[contains(text(), 'notice of nondiscrimination')]")
+    privacy_practices_link = (
+        By.XPATH, "//span[@class='custom-checkbox-label']/a[contains(text(), 'notice of privacy practices')]")
+
+    def put_first_address(self, address):
+        self.enter_text(self.first_address_input, address)
+
+    def put_second_address(self, address):
+        self.enter_text(self.second_address_input, address)
+
+    def put_city(self, city):
+        self.enter_text(self.city_input, city)
+
+    def put_zipcode(self, zipcode):
+        self.enter_text(self.zipcode_input, zipcode)
+
+    def put_preferred_phone(self, phone):
+        self.enter_text(self.preferred_phone_input, phone)
+
+    def select_state(self, state):
+        self.select_dropdown_by_text(self.state_dropdown, state)
+
+    def put_username(self, username):
+        self.enter_text(self.username_input, username)
+
+    def put_password(self, password):
+        self.enter_text(self.password_input, password)
+        self.enter_text(self.password_confirmation_input, password)
+
+    def select_first_security_question(self, question):
+        self.select_dropdown_by_text(self.first_sec_question_dropdown, question)
+
+    def put_first_security_answer(self, answer):
+        self.enter_text(self.first_sec_answer_input, answer)
+
+    def click_create_account(self):
+        self.click(self.create_account_button)
+
+    def click_complete_registration(self):
+        self.click(self.complete_registration_button)

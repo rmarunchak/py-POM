@@ -1,30 +1,29 @@
 import time
-
-from pages.get_started_page import GetStartedPage
 from data.factories.member_factory import MemberFactory
-from pages.home_page import HomePage
 import pytest
 import allure
-from utils.logger.logger_util import setup_logger
-
-# Set up the logger
-logger = setup_logger(__name__)
+from data.constants import Constants
 
 
 @allure.title("Test Registration Functionality")
 @allure.description("This test case verifies the registration functionality.")
 @pytest.mark.nondestructive
-def test_registration(driver):
-    home_page = HomePage(driver)
-    registration_page = GetStartedPage(driver)
+def test_registration(home_page, get_started_page, health_equity_page, account_info_page):
     member = MemberFactory()
 
     home_page.click_get_started_button()
-    registration_page.enter_first_name(member['first_name'])
-    registration_page.enter_last_name(member['last_name'])
-    registration_page.enter_dob_month(member['dob'].strftime('%m'))
-    registration_page.enter_dob_day(member['dob'].strftime('%d'))
-    registration_page.enter_dob_year(member['dob'].strftime('%Y'))
-    registration_page.enter_zip_code(member['addresses'][0]['postal'])
-    registration_page.enter_email(member['email_address'])
-
+    get_started_page.enter_first_name(member['first_name'])
+    get_started_page.enter_last_name(member['last_name'])
+    get_started_page.enter_dob_month(member['dob'].strftime('%m'))
+    get_started_page.enter_dob_day(member['dob'].strftime('%d'))
+    get_started_page.enter_dob_year(member['dob'].strftime('%Y'))
+    get_started_page.enter_zip_code(member['addresses'][0]['postal'])
+    get_started_page.enter_email(member['email_address'])
+    get_started_page.click_promo_code_checkbox()
+    get_started_page.enter_promo_code(Constants.constants['promo_code'])
+    get_started_page.click_continue()
+    health_equity_page.select_random_gender()
+    health_equity_page.select_random_ethnicity()
+    health_equity_page.select_random_race()
+    health_equity_page.click_next()
+    account_info_page.put_username(member['username'])

@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from utils.logger.logger_util import setup_logger
+from selenium.webdriver.support.ui import Select
 
 LOGGER = setup_logger(__name__)
 
@@ -55,3 +56,8 @@ class BasePage:
         """Get the current time in the desired format."""
         from datetime import datetime
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S %z')
+
+    def select_dropdown_by_text(self, by_locator, text):
+        """Select a dropdown option by its visible text."""
+        dropdown = Select(self.find_element(by_locator))
+        dropdown.select_by_visible_text(text)
