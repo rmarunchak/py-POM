@@ -77,9 +77,17 @@ def pytest_exception_interact(node, call, report):
     if report.failed:
         driver = node.funcargs.get('driver')
         if driver:
+            # Define the directory where screenshots will be saved
+            screenshot_dir = "/Users/rmaru/PycharmProjects/pythonProject/utils/screenshots"
             screenshot_name = f"{node.name}_screenshot.png"
-            # Capture the screenshot and save it to the current directory
-            driver.save_screenshot(screenshot_name)
+            screenshot_path = os.path.join(screenshot_dir, screenshot_name)
+
+            # Create the directory if it doesn't exist
+            if not os.path.exists(screenshot_dir):
+                os.makedirs(screenshot_dir)
+
+            # Capture the screenshot and save it to the specified directory
+            driver.save_screenshot(screenshot_path)
 
             # Attach the saved screenshot to the Allure report
-            allure.attach.file(screenshot_name, name=screenshot_name, attachment_type=allure.attachment_type.PNG)
+            allure.attach.file(screenshot_path, name=screenshot_name, attachment_type=allure.attachment_type.PNG)

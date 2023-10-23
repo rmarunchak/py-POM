@@ -20,17 +20,16 @@ class HomePage(BasePage):
     welcome_text = (By.TAG_NAME, 'h1')  # abstract locator
 
     def enter_username(self, username):
-        username_field = self.find_element(self.username_input)
-        username_field.clear()
-        username_field.send_keys(username)
+        self.enter_text(self.username_input, username)
 
     def enter_password(self, password):
-        password_field = self.find_element(self.password_input)
-        password_field.clear()
-        password_field.send_keys(password)
+        self.enter_text(self.password_input, password)
 
     def click_login(self):
-        self.find_element(self.login_button).click()
+        self.click(self.login_button)
+
+    def click_get_started_button(self):
+        self.click(self.get_started_button)
 
     def get_welcome_text(self):
-        return self.find_element(self.welcome_text).text
+        return self.get_text(self.welcome_text)
