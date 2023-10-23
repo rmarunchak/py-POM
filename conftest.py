@@ -32,8 +32,19 @@ def pytest_addoption(parser):
     )
 
 
+@pytest.fixture(scope="session")
+def base_url():
+    """Retrieve base URL from environment variables."""
+    APP_TYPE = os.environ.get('APP_TYPE', 'member')
+    TEST_ENV = os.environ.get('TEST_ENV', 'default_value_if_not_set')
+    SUBDOMAIN = os.environ.get('SUBDOMAIN', 'default_subdomain')
+    CLUSTER = os.environ.get('CLUSTER', 'default_cluster')
+    DOMAIN = os.environ.get('DOMAIN', 'teladoc.io')
+    return f"https://{APP_TYPE}.{SUBDOMAIN}.{CLUSTER}.{DOMAIN}/"
+
+
 @pytest.fixture(scope="function")
-def driver(request, pytestconfig):
+def driver(request, base_url):
     """
     Returns a WebDriver instance based on the browser type (Chrome or Firefox).
     The browser is closed after the test completes.
@@ -58,7 +69,7 @@ def driver(request, pytestconfig):
         raise ValueError(f"Unsupported browser: {browser_name}")
 
     # Navigate to the base URL after initializing the browser
-    base_url = pytestconfig.getoption("base_url")
+    print(f"Base URL: {base_url}")
     driver.get(base_url)
 
     yield driver
