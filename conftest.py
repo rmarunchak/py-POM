@@ -15,6 +15,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page
+from utils.url_utils import generate_base_url
 
 
 # Configure logging
@@ -36,13 +37,7 @@ def pytest_addoption(parser):
 
 @pytest.fixture(scope="session")
 def base_url():
-    """Retrieve base URL from environment variables."""
-    APP_TYPE = os.environ.get('APP_TYPE', 'member')
-    TEST_ENV = os.environ.get('TEST_ENV', 'default_value_if_not_set')
-    SUBDOMAIN = os.environ.get('SUBDOMAIN', 'default_subdomain')
-    CLUSTER = os.environ.get('CLUSTER', 'default_cluster')
-    DOMAIN = os.environ.get('DOMAIN', 'teladoc.io')
-    return f"https://{APP_TYPE}.{SUBDOMAIN}.{CLUSTER}.{DOMAIN}/"
+    return generate_base_url(service_type='application')
 
 
 @pytest.fixture(scope="function")
