@@ -12,7 +12,7 @@ class AccountInfoPage(BasePage):
     second_address_input = (By.XPATH, "//input[@id = 'resident_address_line2']")
     city_input = (By.XPATH, "//input[@id = 'resident_city']")
     zipcode_input = (By.XPATH, "//input[@id = 'resident_zipcode']")
-    preferred_phone_input = (By.XPATH, "//input[@name = 'primaryphonenumber.number']")
+    preferred_phone_input = (By.XPATH, "//input[@name = 'primaryPhoneNumber.number']")
     state_dropdown = (By.XPATH, "//select[@id = 'resident_state']")
     first_available_state = (By.XPATH, "//select[@id = 'resident_state']/option[2]")
     username_input = (By.XPATH, "//input[@id = 'username']")
@@ -135,8 +135,39 @@ class AccountInfoPage(BasePage):
     def tap_same_as_home_address_checkbox(self):
         self.click(self.same_as_home_address_checkbox)
 
+    def tap_notice_of_privacy_practices_checkbox(self):
+        self.click(self.notice_of_privacy_practices_checkbox)
+
+    def tap_terms_of_service_link(self):
+        self.click(self.terms_of_service_link)
+
+    def tap_non_discrimination_link(self):
+        self.click(self.non_discrimination_link)
+
+    def tap_privacy_practices_link(self):
+        self.click(self.privacy_practices_link)
+
     def click_create_account(self):
         self.click(self.create_account_button)
 
     def click_complete_registration(self):
         self.click(self.complete_registration_button)
+
+    def complete_registration(self, member):
+        """Completes the registration process with the provided member details."""
+
+        # Check if username, password, and confirm password fields are empty
+        if not self.get_text(self.username_input):
+            self.enter_text(self.username_input, member['username'])
+
+        if not self.get_text(self.password_input):
+            self.enter_text(self.password_input, member['password'])
+
+        if not self.get_text(self.password_confirmation_input):
+            self.enter_text(self.password_confirmation_input, member['password'])
+
+        # Click on the complete registration button
+        self.click(self.complete_registration_button)
+
+
+

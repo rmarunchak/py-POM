@@ -41,7 +41,12 @@ def test_registration(home_page, get_started_page, health_equity_page, account_i
     account_info_page.put_card_number(member['card_details']['card_number'])
     account_info_page.select_card_exp_month(member['card_details']['exp_month'])
     account_info_page.select_card_exp_year(member['card_details']['exp_year'])
-    time.sleep(20)
+    account_info_page.tap_same_as_home_address_checkbox()
+    account_info_page.put_preferred_phone(member['phone_numbers'][0]['number'])
+    account_info_page.tap_notice_of_privacy_practices_checkbox()
+    account_info_page.complete_registration(member)
+    time.sleep(30)
+
 
 
 
