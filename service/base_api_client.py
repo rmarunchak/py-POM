@@ -1,8 +1,12 @@
 import requests
 import os
 from utils.url_utils import generate_base_url
+import json
+import time
+from requests.exceptions import RequestException, HTTPError, Timeout, ConnectionError
 
-class BaseTASAPIClient:
+
+class BaseAPIClient:
     def __init__(self):
         self.base_url = generate_base_url(service_type='api')
         self.token = None
@@ -64,3 +68,39 @@ class BaseTASAPIClient:
                               os.environ.get('TAS_API_SUPER_ADMIN_PASSWORD'))
             return False
         return True
+
+    def get_with_payload(self, path, payload, expected_code, params=None, additional_headers=None, parse_response=True,
+                         timeout=10):
+        end_time = time.time() + timeout
+        response = None
+
+        while time.time() < end_time:
+            try:
+                # Convert payload to JSON
+                payload_json = json.dumps(payload)
+
+                # Merge headers if additional headers are provided
+                headers = self.headers
+                if additional_headers:
+                    headers.update(additional_headers)
+
+                response = self.get(path, params=params)
+                # Validate response code
+                self.validate_response_code(response, expected_code)
+                break
+            except (RequestException, HTTPError, Timeout, ConnectionError) as e:
+                # Log the exception for debugging purposes
+                print(f"Error occurred: {e}")
+                # Wait for 2 seconds before retrying
+                time.sleep(2)
+
+        # Parse response if required
+        if parse_response:
+            return response.json()
+        else:
+            return response
+
+    @staticmethod
+    def validate_response_code(response, expected_code):
+        if response.status_code != expected_code:
+            raise Exception(f"Expected status code {expected_code}, but got {response.status_code}")

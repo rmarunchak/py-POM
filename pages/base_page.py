@@ -85,3 +85,9 @@ class BasePage:
             LOGGER.error(
                 f"[ERROR], [{self.get_current_time()}]: Element not enabled with locator: {by_locator} within {timeout} seconds.")
             raise
+
+    def clear_text(self, by_locator):
+        """Clear the text of an input field by its locator."""
+        self.find_element(by_locator).clear()
+        LOGGER.info(f"[INFO], [{self.get_current_time()}]: Cleared text from element with locator '{by_locator}'")
+

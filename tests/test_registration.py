@@ -45,11 +45,8 @@ def test_registration(home_page, get_started_page, health_equity_page, account_i
     account_info_page.put_preferred_phone(member['phone_numbers'][0]['number'])
     account_info_page.tap_notice_of_privacy_practices_checkbox()
     account_info_page.complete_registration(member)
-    time.sleep(30)
-
-
-
-
+    time.sleep(15)
+    account_info_page.retrieve_person_id(member['first_name'], member['last_name'])
 
 
 

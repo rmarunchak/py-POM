@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from .base_page import BasePage
 from random import choice
+from service.endpoints.cucumber_endpoint import CucumberEndpoint
 
 
 class AccountInfoPage(BasePage):
@@ -164,10 +165,14 @@ class AccountInfoPage(BasePage):
             self.enter_text(self.password_input, member['password'])
 
         if not self.get_text(self.password_confirmation_input):
+            self.clear_text(self.password_confirmation_input)  # Clear the field
             self.enter_text(self.password_confirmation_input, member['password'])
 
         # Click on the complete registration button
         self.click(self.complete_registration_button)
 
-
-
+    def retrieve_person_id(self, first_name, last_name):
+        """Retrieve the person ID from the TAS API using the provided first and last name."""
+        cucumber_endpoint = CucumberEndpoint()
+        person_data = cucumber_endpoint.retrieve_person({'first_nm': first_name, 'last_nm': last_name})
+        return person_data.get('person_id')
