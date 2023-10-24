@@ -26,25 +26,30 @@ def test_registration(home_page, get_started_page, health_equity_page, account_i
     health_equity_page.select_random_ethnicity()
     health_equity_page.select_random_race()
     health_equity_page.click_next()
-
-    # Account Info Page
-    account_info_page.enter_address_details(
-        member['addresses'][0]['address_line_1'],
-        member['addresses'][0]['address_line_2'],
-        member['addresses'][0]['city'],
-        member['addresses'][0]['postal']
-    )
-    account_info_page.enter_user_details(member['username'], member['password'])
-    for i in range(3):  # Fill in 3 security questions
-        account_info_page.select_random_security_question(i)
-        account_info_page.enter_security_answer(i, member['security_questions'][i]['response'])
-    account_info_page.enter_card_details(
-        member['card_details']['card_type'],
-        member['card_details']['card_number'],
-        member['card_details']['exp_month'],
-        member['card_details']['exp_year']
-    )
+    account_info_page.put_username(member['username'])
+    account_info_page.put_password(member['password'])
+    account_info_page.put_first_address(member['addresses'][0]['address_line_1'])
+    account_info_page.put_city(member['addresses'][0]['city'])
+    account_info_page.select_state(member['addresses'][0]['state'])
+    account_info_page.select_random_first_sec_question()
+    account_info_page.put_first_security_answer(member['security_questions'][0]['response'])
+    account_info_page.select_random_second_sec_question()
+    account_info_page.put_second_security_answer(member['security_questions'][1]['response'])
+    account_info_page.select_random_third_sec_question()
+    account_info_page.put_third_security_answer(member['security_questions'][2]['response'])
+    account_info_page.select_card_type(member['card_details']['card_type'])
+    account_info_page.put_card_number(member['card_details']['card_number'])
+    account_info_page.select_card_exp_month(member['card_details']['exp_month'])
+    account_info_page.select_card_exp_year(member['card_details']['exp_year'])
     account_info_page.tap_same_as_home_address_checkbox()
     account_info_page.put_preferred_phone(member['phone_numbers'][0]['number'])
     account_info_page.tap_notice_of_privacy_practices_checkbox()
     account_info_page.complete_registration(member)
+    time.sleep(30)
+
+
+
+
+
+
+
