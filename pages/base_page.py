@@ -7,6 +7,7 @@ from selenium.common.exceptions import TimeoutException
 from utils.logger.logger_util import setup_logger
 from selenium.webdriver.support.ui import Select
 
+
 LOGGER = setup_logger(__name__)
 
 
@@ -61,3 +62,26 @@ class BasePage:
         """Select a dropdown option by its visible text."""
         dropdown = Select(self.find_element(by_locator))
         dropdown.select_by_visible_text(text)
+
+    def find_elements(self, by_locator, timeout=10):
+        """Find and return a list of elements by their locator."""
+        try:
+            elements = WebDriverWait(self.driver, timeout).until(EC.visibility_of_all_elements_located(by_locator))
+            LOGGER.info(f"[INFO], [{self.get_current_time()}]: Found elements with locator '{by_locator}'")
+            return elements
+        except TimeoutException:
+            LOGGER.error(
+                f"[ERROR], [{self.get_current_time()}]: Elements not found with locator: {by_locator} within {timeout} seconds.")
+            raise
+
+    def wait_until_enabled(self, by_locator, timeout=10):
+        """Wait until an element is enabled and clickable."""
+        try:
+            element = WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(by_locator))
+            LOGGER.info(
+                f"[INFO], [{self.get_current_time()}]: Element with locator '{by_locator}' is enabled and clickable")
+            return element
+        except TimeoutException:
+            LOGGER.error(
+                f"[ERROR], [{self.get_current_time()}]: Element not enabled with locator: {by_locator} within {timeout} seconds.")
+            raise

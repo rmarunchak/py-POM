@@ -1,5 +1,6 @@
 class Constants:
-    constants = {
-        "promo_code": "TD_TRIAL"
 
+    promo_codes = {
+        "open_group": "TD_TRIAL"
     }
+

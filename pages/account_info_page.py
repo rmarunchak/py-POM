@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from .base_page import BasePage
+from random import choice
 
 
 class AccountInfoPage(BasePage):
@@ -82,11 +83,57 @@ class AccountInfoPage(BasePage):
         self.enter_text(self.password_input, password)
         self.enter_text(self.password_confirmation_input, password)
 
-    def select_first_security_question(self, question):
-        self.select_dropdown_by_text(self.first_sec_question_dropdown, question)
+    def select_random_first_sec_question(self):
+        self.click(self.first_sec_question_dropdown)
+        options = self.find_elements(self.first_sec_question_buttons)[1:]  # Excluding the first option
+        choice(options).click()
+
+    def select_random_second_sec_question(self):
+        self.click(self.second_sec_question_dropdown)
+        options = self.find_elements(self.second_sec_question_buttons)[1:]  # Excluding the first option
+        choice(options).click()
+
+    def select_random_third_sec_question(self):
+        self.click(self.third_sec_question_dropdown)
+        options = self.find_elements(self.third_sec_question_buttons)[1:]  # Excluding the first option
+        choice(options).click()
 
     def put_first_security_answer(self, answer):
         self.enter_text(self.first_sec_answer_input, answer)
+
+    def put_second_security_answer(self, answer):
+        self.enter_text(self.second_sec_answer_input, answer)
+
+    def put_third_security_answer(self, answer):
+        self.enter_text(self.third_sec_answer_input, answer)
+
+    def select_first_available_card(self):
+        """Select the first available card from the card type dropdown."""
+        self.click(self.card_type_dropdown)
+        self.click(self.first_available_card)
+
+    def select_card_type(self, value):
+        """Select a specific card type from the card type dropdown."""
+        self.click(self.card_type_dropdown)
+        card_option_locator = (By.XPATH, f"//*[contains(text(),'{value}')]")
+        self.click(card_option_locator)
+
+    def put_card_number(self, value):
+        self.enter_text(self.card_number_input, value)
+
+    def select_card_exp_month(self, value):
+        self.click(self.card_exp_month_dropdown)
+        month_option = (By.XPATH, f"//select[@id = 'billing_expiration_month']/option[normalize-space(.)='{value}']")
+        self.click(month_option)
+
+    def select_card_exp_year(self, value):
+        self.click(self.card_exp_year_dropdown)
+        year_option = (By.XPATH, f"//select[@id = 'billing_expiration_year']//option[contains(@label, '{value}')]")
+        self.wait_until_enabled(year_option, timeout=4)
+        self.click(year_option)
+
+    def tap_same_as_home_address_checkbox(self):
+        self.click(self.same_as_home_address_checkbox)
 
     def click_create_account(self):
         self.click(self.create_account_button)
