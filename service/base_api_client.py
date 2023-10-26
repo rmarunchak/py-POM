@@ -1,10 +1,10 @@
 import requests
-import time
+from utils.url_utils import generate_base_url
 
 
 class BaseAPIClient:
     def __init__(self):
-        self.base_url = "https://tas.oshuk-759-1.uat.teladoc.io/"
+        self.base_url = generate_base_url(service_type='api')
         self.token = self.authenticate()
         self.headers = {
             "Authorization": f"Bearer {self.token}",
@@ -13,7 +13,7 @@ class BaseAPIClient:
 
     def authenticate(self):
         auth_endpoint = "v1/authentication/login"
-        auth_url = f"https://tas.oshuk-759-1.uat.teladoc.io/{auth_endpoint}"
+        auth_url = f"{self.base_url}{auth_endpoint}"  # Use the base_url attribute here
         params = {
             "username": 'sadmin',
             "password": 'test1234',
