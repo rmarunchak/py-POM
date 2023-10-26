@@ -9,4 +9,4 @@ class MemberEndpoint(BaseAPIClient):
 
     def retrieve_member_by_id(self, member_id):
         endpoint = self.TAS_V1_MEMBERS_ID % member_id
-        return self.get(endpoint)
+        return self.get(endpoint, pp=True)

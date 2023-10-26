@@ -1,5 +1,6 @@
 import requests
 from utils.url_utils import generate_base_url
+import json
 
 
 class BaseAPIClient:
@@ -31,12 +32,18 @@ class BaseAPIClient:
         print(f"Authentication Token: {token}")
         return token
 
-    def get(self, endpoint, params=None):
+    def get(self, endpoint, params=None, pp=False):
         url = f"{self.base_url}/{endpoint}"
         response = requests.get(url, headers=self.headers, params=params)
         if response.status_code != 200:
             raise Exception(f"GET request to {url} failed with status code {response.status_code}!")
-        return response.json()
+
+        data = response.json()
+
+        if pp:
+            print(json.dumps(data, indent=4))
+
+        return data
 
     def set_authorization_header(self, type, token):
         self.headers['Authorization'] = f"{type} {token}"
