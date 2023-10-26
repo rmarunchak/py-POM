@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from .base_page import BasePage
 from random import choice
 from service.endpoints.cucumber_endpoint import CucumberEndpoint
+from service.endpoints.member_endpoint import MemberEndpoint
 
 
 class AccountInfoPage(BasePage):
@@ -176,3 +177,9 @@ class AccountInfoPage(BasePage):
         cucumber_endpoint = CucumberEndpoint()
         person_data = cucumber_endpoint.retrieve_person({'first_nm': first_name, 'last_nm': last_name})
         return person_data.get('person_id')
+
+    def retrieve_member_by_id(self, member_id):
+        member_endpoint = MemberEndpoint()
+        response = member_endpoint.retrieve_member_by_id(member_id)
+        print(response)
+
