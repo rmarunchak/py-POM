@@ -1,6 +1,7 @@
 import requests
 from utils.url_utils import generate_base_url
 import json
+import time
 
 
 class BaseAPIClient:
@@ -47,3 +48,42 @@ class BaseAPIClient:
 
     def set_authorization_header(self, type, token):
         self.headers['Authorization'] = f"{type} {token}"
+
+    def get_with_payload(self, path, payload, expected_code, params=None, additional_headers=None, parse_response=True,
+                         timeout=10):
+        url = f"{self.base_url}/{path}"
+
+        # Convert payload to JSON
+        json_payload = json.dumps(payload)
+
+        # Merge additional headers if provided
+        headers = self.headers
+        if additional_headers:
+            headers.update(additional_headers)
+
+        # Initialize response before the loop
+        response = None
+
+        # Use a loop to retry the request until the timeout
+        elapsed_time = 0
+        polling_interval = 2
+        while elapsed_time < timeout:
+            response = requests.get(url, headers=headers, params=params, data=json_payload)
+
+            # Validate response code
+            if response.status_code == expected_code:
+                break
+            else:
+                time.sleep(polling_interval)
+                elapsed_time += polling_interval
+
+        # Raise an exception if the response code doesn't match the expected code after retries
+        if not response or response.status_code != expected_code:
+            raise Exception(
+                f"GET request to {url} failed with status code {response.status_code if response else 'None'}. Expected {expected_code}!")
+
+        # Parse the response if required
+        if parse_response:
+            return response.json()
+        else:
+            return response
