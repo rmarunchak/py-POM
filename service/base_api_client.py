@@ -2,6 +2,9 @@ import requests
 from utils.url_utils import generate_base_url
 import json
 import time
+from utils.logger.logger_util import setup_logger
+
+LOGGER = setup_logger(__name__)
 
 
 class BaseAPIClient:
@@ -51,10 +54,20 @@ class BaseAPIClient:
 
     def get_with_payload(self, path, payload, expected_code, params=None, additional_headers=None, parse_response=True,
                          timeout=10):
-        url = f"{self.base_url}/{path}"
+        # Ensure that there's no leading slash in the path to avoid double slashes
+        path = path.lstrip('/')
+
+        # Construct the URL
+        url = f"{self.base_url}{path}"
 
         # Convert payload to JSON
         json_payload = json.dumps(payload)
+
+        # Log the endpoint and payload
+        LOGGER.info(f"Sending GET request to {url}")
+        LOGGER.info(f"Payload: {json_payload}")
+        if params:
+            LOGGER.info(f"Parameters: {params}")
 
         # Merge additional headers if provided
         headers = self.headers

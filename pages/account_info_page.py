@@ -9,6 +9,8 @@ class AccountInfoPage(BasePage):
 
     def __init__(self, driver):
         super().__init__(driver)
+        self.cucumber_endpoint = CucumberEndpoint()
+        self.member_endpoint = MemberEndpoint()
 
     first_address_input = (By.XPATH, "//input[@id = 'resident_address_line1']")
     second_address_input = (By.XPATH, "//input[@id = 'resident_address_line2']")
@@ -172,14 +174,9 @@ class AccountInfoPage(BasePage):
         # Click on the complete registration button
         self.click(self.complete_registration_button)
 
-    def retrieve_person_id(self, first_name, last_name):
-        """Retrieve the person ID from the TAS API using the provided first and last name."""
-        cucumber_endpoint = CucumberEndpoint()
-        person_data = cucumber_endpoint.retrieve_person({'first_nm': first_name, 'last_nm': last_name})
-        return person_data.get('person_id')
+    def retrieve_person_by_username(self, user_name):
+        args = {'user_nm': user_name}
+        return self.cucumber_endpoint.retrieve_person(args)
 
-    def retrieve_member_by_id(self, member_id):
-        member_endpoint = MemberEndpoint()
-        response = member_endpoint.retrieve_member_by_id(member_id)
-        print(response)
-
+    def retrieve_member(self, member_id):
+        return self.member_endpoint.retrieve_member_by_id(member_id)

@@ -45,9 +45,10 @@ def test_registration(home_page, get_started_page, health_equity_page, account_i
     account_info_page.put_preferred_phone(member['phone_numbers'][0]['number'])
     account_info_page.tap_notice_of_privacy_practices_checkbox()
     account_info_page.complete_registration(member)
-    time.sleep(5)
-    account_info_page.retrieve_member_by_id(50)
-
-
-
+    time.sleep(25)
+    person_response = account_info_page.retrieve_person_by_username(member['username'])
+    assert member['first_name'] == person_response[
+        'first_nm'], f"Expected first name {member['first_name']} but got {person_response['first_nm']}"
+    assert member['last_name'] == person_response[
+        'last_nm'], f"Expected last name {member['last_name']} but got {person_response['last_nm']}"
 
