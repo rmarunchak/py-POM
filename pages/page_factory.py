@@ -3,6 +3,7 @@ from pages.home_page import HomePage
 from pages.get_started_page import GetStartedPage
 from pages.health_equity_page import HealthEquityPage
 from pages.account_info_page import AccountInfoPage
+from pages.confirm_page import ConfirmPage
 
 
 class HomePageFactory(Factory):
@@ -29,5 +30,12 @@ class HealthEquityPageFactory(Factory):
 class AccountInfoPageFactory(Factory):
     class Meta:
         model = AccountInfoPage
+
+    driver = None
+
+
+class ConfirmPageFactory(Factory):
+    class Meta:
+        model = ConfirmPage
 
     driver = None

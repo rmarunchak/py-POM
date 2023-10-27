@@ -3,6 +3,7 @@ from .page_factory import HomePageFactory
 from .page_factory import GetStartedPageFactory
 from .page_factory import HealthEquityPageFactory
 from .page_factory import AccountInfoPageFactory
+from .page_factory import ConfirmPageFactory
 
 
 @pytest.fixture(scope="function")
@@ -23,3 +24,8 @@ def health_equity_page(driver):
 @pytest.fixture(scope="function")
 def account_info_page(driver):
     return AccountInfoPageFactory(driver=driver)
+
+
+@pytest.fixture(scope="function")
+def confirm_page(driver):
+    return ConfirmPageFactory(driver=driver)
