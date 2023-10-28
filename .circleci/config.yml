@@ -6,9 +6,31 @@ jobs:
       - image: circleci/python:3.8  # You can specify the Python version you need
     steps:
       - checkout
+
+      # Upgrade pip
+      - run:
+          name: Upgrade pip
+          command: python -m pip install --upgrade pip
+
+      # Restore cache (if available)
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      # Install dependencies from requirements.txt
       - run:
           name: Install dependencies from requirements.txt
           command: pip install -r requirements.txt
+
+      # Save cache
+      - save_cache:
+          paths:
+          - ~/.cache/pip
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      # Set environment variables and run tests
       - run:
           name: Set environment variables and run tests
           command: |
@@ -18,9 +40,13 @@ jobs:
             export CLUSTER=uat
             export DOMAIN=teladoc.io
             pytest tests/test_registration.py --alluredir=./results_directory
+
+      # Generate Allure report
       - run:
           name: Generate Allure report
           command: allure generate ./results_directory -o ./allure-report
+
+      # Store the Allure report as an artifact
       - store_artifacts:
           path: ./allure-report
           destination: allure-report
