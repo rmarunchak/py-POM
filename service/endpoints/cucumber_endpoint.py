@@ -10,9 +10,9 @@ class CucumberEndpoint(BaseAPIClient):
 
     TAS_V1_CUCUMBER_OBJECT_MEMBER = 'v1/cucumber/object/member'
     TAS_V1_CUCUMBER_OBJECT_PERSON = 'v1/cucumber/object/person'
-    TAS_V1_CUCUMBER_GENERATOR_ADMIN = 'generator/admin'
-    TAS_V1_CUCUMBER_GENERATOR_MEMBER = 'generator/member'
-    TAS_V1_CUCUMBER_OBJECT_GROUP = 'object/group'
+    TAS_V1_CUCUMBER_GENERATOR_ADMIN = 'v1/cucumber/generator/admin'
+    TAS_V1_CUCUMBER_GENERATOR_MEMBER = 'v1/cucumber/generator/member'
+    TAS_V1_CUCUMBER_OBJECT_GROUP = 'v1/cucumber/object/group'
 
     def retrieve_person(self, args, expected_code=200):
         LOGGER.info(f"Retrieving TAS person with expected code {expected_code}")

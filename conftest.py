@@ -125,8 +125,11 @@ if pytest_selenium_available:
 
     # Modify the pytest_selenium's pytest_configure to use the custom attribute
     def custom_pytest_selenium_configure(config):
-        capabilities = config.getoption('capabilities', default={})
+        try:
+            capabilities = getattr(config, '_capabilities', {})
+        except AttributeError:
+            capabilities = {}
+        # ... [rest of the logic if needed]
 
-
-    pytest_configure._original = pytest_configure
+    # Monkey patching: Override the problematic function with the custom function
     pytest_selenium.pytest_configure = custom_pytest_selenium_configure
