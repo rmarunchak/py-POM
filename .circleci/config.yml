@@ -4,13 +4,21 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.8
+        environment:
+          TEST_ENV: aws
+          APP_TYPE: member
+          SUBDOMAIN: oshuk-759-1
+          CLUSTER: uat
+          DOMAIN: teladoc.io
     steps:
       - checkout
 
       # Upgrade pip
       - run:
           name: Upgrade pip
-          command: python -m pip install --upgrade pip
+          command: |
+            python -m pip install --upgrade pip
+            echo "Pip upgrade completed successfully."
 
       # Set up a virtual environment
       - run:
@@ -18,38 +26,50 @@ jobs:
           command: |
             python -m venv venv
             echo "source venv/bin/activate" >> $BASH_ENV
+            echo "Virtual environment setup completed successfully."
 
       # Upgrade pytest-selenium and pytest
       - run:
           name: Upgrade pytest-selenium and pytest
-          command: pip install --upgrade pytest-selenium pytest
+          command: |
+            pip install --upgrade pytest-selenium pytest
+            echo "Pytest-selenium and pytest upgrade completed successfully."
 
       # Explicitly install conflicting packages
       - run:
           name: Install conflicting packages
           command: |
             pip install packaging==20.4 platformdirs==2.0
+            echo "Conflicting packages installation completed successfully."
 
       # Install dependencies from requirements.txt
       - run:
           name: Install dependencies from requirements.txt
-          command: pip install -r requirements.txt
-
-      # Set environment variables and run tests
-      - run:
-          name: Run tests with environment variables
           command: |
-            TEST_ENV=aws APP_TYPE=member SUBDOMAIN=oshuk-759-1 CLUSTER=uat DOMAIN=teladoc.io pytest tests/test_registration.py --alluredir=./results_directory
+            pip install -r requirements.txt
+            echo "Dependencies installation from requirements.txt completed successfully."
+
+      # Run tests
+      - run:
+          name: Run tests
+          command: |
+            pytest tests/test_registration.py --alluredir=./results_directory
+            echo "Tests run completed successfully."
 
       # Generate Allure report
       - run:
           name: Generate Allure report
-          command: allure generate ./results_directory -o ./allure-report
+          command: |
+            allure generate ./results_directory -o ./allure-report
+            echo "Allure report generation completed successfully."
 
       # Store the Allure report as an artifact
       - store_artifacts:
           path: ./allure-report
           destination: allure-report
+      - run:
+          name: Store Allure report artifact
+          command: echo "Allure report artifact stored successfully."
 
 workflows:
   version: 2
