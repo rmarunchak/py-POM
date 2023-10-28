@@ -25,6 +25,11 @@ jobs:
           command: |
             pip install packaging==20.4 platformdirs==2.0
 
+      # Upgrade pytest-selenium
+      - run:
+          name: Upgrade pytest-selenium
+          command: pip install --upgrade pytest-selenium
+
       # Install dependencies from requirements.txt
       - run:
           name: Install dependencies from requirements.txt
