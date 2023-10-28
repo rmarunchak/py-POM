@@ -17,11 +17,12 @@ jobs:
       - run:
           name: Download and install ChromeDriver
           command: |
-            CHROMEDRIVER_VERSION="118.0.5993.70"
+            CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_118.0.5993)
             wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
             unzip chromedriver_linux64.zip
             sudo mv chromedriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/chromedriver    
+            sudo chmod +x /usr/local/bin/chromedriver
+          
           
 
           # Upgrade pip
