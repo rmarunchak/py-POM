@@ -32,7 +32,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 
 def pytest_addoption(parser):
-    """Add browser option to pytest command-line."""
+    """Add browser and capabilities options to pytest command-line."""
     default_browser = os.environ.get('DEFAULT_BROWSER', 'chrome')
     parser.addoption(
         "--browser",
@@ -40,6 +40,12 @@ def pytest_addoption(parser):
         default=default_browser,
         choices=["chrome", "firefox"],
         help="Specify browser to use: chrome or firefox"
+    )
+    parser.addoption(
+        "--capabilities",
+        action="store",
+        default={},
+        help="Specify browser capabilities as a dictionary"
     )
 
 
@@ -119,9 +125,8 @@ if pytest_selenium_available:
 
     # Modify the pytest_selenium's pytest_configure to use the custom attribute
     def custom_pytest_selenium_configure(config):
-        if hasattr(config, '_capabilities'):
-            capabilities = config._capabilities
-            # ... rest of the pytest_selenium's pytest_configure logic
+        capabilities = config.getoption('capabilities', default={})
+
 
     pytest_configure._original = pytest_configure
     pytest_selenium.pytest_configure = custom_pytest_selenium_configure
