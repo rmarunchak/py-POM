@@ -35,3 +35,4 @@ tomli==2.0.1
 typing_extensions==4.8.0
 urllib3==1.26.18
 wrapt==1.13.3
+webdriver_manager==3.5.0
