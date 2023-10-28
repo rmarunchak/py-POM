@@ -14,9 +14,18 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
-from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
 from utils.url_utils import generate_base_url
+from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
 
+# Check if the pytest_selenium plugin is available
+try:
+    import pytest_selenium
+    from pytest_selenium import pytest_configure
+except ImportError:
+    pytest_selenium = None  # Set pytest_selenium to None if the import fails
+    pytest_selenium_available = False
+else:
+    pytest_selenium_available = True
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -24,8 +33,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def pytest_addoption(parser):
     """Add browser option to pytest command-line."""
-    default_browser = os.environ.get('DEFAULT_BROWSER', 'chrome')  # Fetch the DEFAULT_BROWSER environment variable,
-    # if not set, default to 'chrome'
+    default_browser = os.environ.get('DEFAULT_BROWSER', 'chrome')
     parser.addoption(
         "--browser",
         action="store",
@@ -99,3 +107,21 @@ def pytest_exception_interact(node, call, report):
 
             # Attach the saved screenshot to the Allure report
             allure.attach.file(screenshot_path, name=screenshot_name, attachment_type=allure.attachment_type.PNG)
+
+
+if pytest_selenium_available:
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_configure(config):
+        # Modify this part based on how you want to fetch capabilities
+        if hasattr(config, 'getoption'):
+            capabilities = config.getoption("capabilities", {})
+            config._capabilities = capabilities  # Store it in a custom attribute
+
+    # Modify the pytest_selenium's pytest_configure to use the custom attribute
+    def custom_pytest_selenium_configure(config):
+        if hasattr(config, '_capabilities'):
+            capabilities = config._capabilities
+            # ... rest of the pytest_selenium's pytest_configure logic
+
+    pytest_configure._original = pytest_configure
+    pytest_selenium.pytest_configure = custom_pytest_selenium_configure
