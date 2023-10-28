@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.8  # You can specify the Python version you need
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies from requirements.txt
+          command: pip install -r requirements.txt
+      - run:
+          name: Set environment variables and run tests
+          command: |
+            export TEST_ENV=aws
+            export APP_TYPE=member
+            export SUBDOMAIN=oshuk-759-1
+            export CLUSTER=uat
+            export DOMAIN=teladoc.io
+            pytest tests/test_registration.py --alluredir=./results_directory
+      - run:
+          name: Generate Allure report
+          command: allure generate ./results_directory -o ./allure-report
+      - store_artifacts:
+          path: ./allure-report
+          destination: allure-report
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
