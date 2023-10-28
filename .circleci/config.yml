@@ -32,14 +32,9 @@ jobs:
 
       # Set environment variables and run tests
       - run:
-          name: Set environment variables and run tests
+          name: Run tests with hardcoded environment variables
           command: |
-            export TEST_ENV=aws
-            export APP_TYPE=member
-            export SUBDOMAIN=oshuk-759-1
-            export CLUSTER=uat
-            export DOMAIN=teladoc.io
-            pytest tests/test_registration.py --alluredir=./results_directory
+            TEST_ENV=aws APP_TYPE=member SUBDOMAIN=oshuk-759-1 CLUSTER=uat DOMAIN=teladoc.io pytest tests/test_registration.py --alluredir=./results_directory
 
       # Generate Allure report
       - run:
