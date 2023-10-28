@@ -14,7 +14,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
-from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page
+from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
 from utils.url_utils import generate_base_url
 
 

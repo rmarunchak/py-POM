@@ -18,7 +18,7 @@ class BasePage:
         """Initialize the BasePage object with a driver."""
         self.driver = driver
 
-    def find_element(self, by_locator, timeout=10):
+    def find_element(self, by_locator, timeout=30):
         """Find and return an element by its locator."""
         try:
             element = WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(by_locator))

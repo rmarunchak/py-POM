@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from .base_page import BasePage
 from utils.base_assert import BaseAssert
 import re
+import pdb
 
 
 class ConfirmPage(BasePage, BaseAssert):
@@ -39,10 +40,11 @@ class ConfirmPage(BasePage, BaseAssert):
         self.find_element(self.go_to_my_homepage_button).click()
 
     def verify_welcome_message_text(self, member):
-        user_name = member if isinstance(member, str) else member['user_nm']
-        welcome_message_pattern = r"Good (Morning|Evening|Afternoon), {}".format(user_name)
-        assert re.match(welcome_message_pattern, self.retrieve_welcome_disclaimer_text()), \
-            f"Expected Welcome message to match pattern {welcome_message_pattern}"
+        first_name = member if isinstance(member, str) else member['first_name']
+        welcome_message_pattern = r"Good (Morning|Evening|Afternoon), {}".format(first_name)
+        actual_message = self.retrieve_welcome_disclaimer_text()
+
+        BaseAssert.verify_object_contains(welcome_message_pattern, actual_message, 'Welcome message')
 
     def retrieve_welcome_disclaimer_text(self):
         return self.find_element(self.welcome_message_text_field).text
