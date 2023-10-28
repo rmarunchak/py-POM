@@ -15,13 +15,13 @@ jobs:
 
 
       - run:
-          name: Install Google Chrome
+          name: Download and install ChromeDriver
           command: |
-            sudo apt-get update
-            sudo apt-get install -y wget
-            wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-            sudo apt install ./google-chrome-stable_current_amd64.deb
-            echo "Google Chrome installation completed successfully."
+            CHROMEDRIVER_VERSION="118.0.5993.70"
+            wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+            unzip chromedriver_linux64.zip
+            sudo mv chromedriver /usr/local/bin/
+            sudo chmod +x /usr/local/bin/chromedriver    
           
 
           # Upgrade pip
