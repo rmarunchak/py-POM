@@ -19,16 +19,16 @@ jobs:
             python -m venv venv
             echo "source venv/bin/activate" >> $BASH_ENV
 
+      # Upgrade pytest-selenium and pytest
+      - run:
+          name: Upgrade pytest-selenium and pytest
+          command: pip install --upgrade pytest-selenium pytest
+
       # Explicitly install conflicting packages
       - run:
           name: Install conflicting packages
           command: |
             pip install packaging==20.4 platformdirs==2.0
-
-      # Upgrade pytest-selenium
-      - run:
-          name: Upgrade pytest-selenium
-          command: pip install --upgrade pytest-selenium
 
       # Install dependencies from requirements.txt
       - run:
