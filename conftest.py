@@ -118,18 +118,19 @@ def pytest_exception_interact(node, call, report):
 if pytest_selenium_available:
     @pytest.hookimpl(tryfirst=True)
     def pytest_configure(config):
-        # Modify this part based on how you want to fetch capabilities
+        # Add the missing attribute
+        if not hasattr(config, '_variables'):
+            config._variables = {}
+
+        # Your existing logic
         if hasattr(config, 'getoption'):
             capabilities = config.getoption("capabilities", {})
-            config._capabilities = capabilities  # Store it in a custom attribute
+            config._capabilities = capabilities
 
-    # Modify the pytest_selenium's pytest_configure to use the custom attribute
-    def custom_pytest_selenium_configure(config):
-        try:
-            capabilities = getattr(config, '_capabilities', {})
-        except AttributeError:
-            capabilities = {}
-        # ... [rest of the logic if needed]
 
-    # Monkey patching: Override the problematic function with the custom function
-    pytest_selenium.pytest_configure = custom_pytest_selenium_configure
+    # Workaround 2: Bypass the problematic function
+    def bypass_function(*args, **kwargs):
+        pass
+
+
+    pytest_selenium.pytest_configure = bypass_function
