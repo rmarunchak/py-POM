@@ -7,8 +7,8 @@ jobs:
         environment:
           TEST_ENV: aws
           APP_TYPE: member
-          SUBDOMAIN: oshuk-759-1
-          CLUSTER: uat
+          SUBDOMAIN: redesign-master
+          CLUSTER: qa
           DOMAIN: teladoc.io
     steps:
       - checkout
@@ -22,6 +22,15 @@ jobs:
             wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
             sudo apt install ./google-chrome-stable_current_amd64.deb
             echo "Google Chrome installation completed successfully."
+
+      # Download and install a specific version of ChromeDriver
+      - run:
+          name: Install specific version of ChromeDriver
+          command: |
+            wget https://chromedriver.storage.googleapis.com/118.0.5993.70/chromedriver_linux64.zip
+            unzip chromedriver_linux64.zip
+            sudo mv chromedriver /usr/local/bin/
+            echo "Specific version of ChromeDriver installed successfully."
 
       # Upgrade pip
       - run:

@@ -4,7 +4,6 @@ This module contains pytest fixtures for setting up and tearing down test prereq
 
 import pytest
 import allure
-from pathlib import Path
 import logging
 import os
 from selenium import webdriver
@@ -16,17 +15,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from utils.url_utils import generate_base_url
 from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
-
-# Check if the pytest_selenium plugin is available
-try:
-    import pytest_selenium
-    from pytest_selenium import pytest_configure
-except ImportError:
-    pytest_selenium = None  # Set pytest_selenium to None if the import fails
-    pytest_selenium_available = False
-else:
-    pytest_selenium_available = True
-
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -56,17 +44,13 @@ def base_url():
 
 @pytest.fixture(scope="function")
 def driver(request, base_url):
-    """
-    Returns a WebDriver instance based on the browser type (Chrome or Firefox).
-    The browser is closed after the test completes.
-    """
     browser_name = request.config.getoption("--browser")
     logging.info(f"Initializing {browser_name} browser.")
 
     if browser_name == "chrome":
         chrome_options = ChromeOptions()
         chrome_options.add_argument("--start-maximized")
-        driver_service = ChromeService(ChromeDriverManager().install())
+        driver_service = ChromeService(ChromeDriverManager().install(), options=chrome_options)
         driver = webdriver.Chrome(service=driver_service, options=chrome_options)
         logging.info("Chrome browser started successfully.")
     elif browser_name == "firefox":
@@ -100,7 +84,7 @@ def pytest_exception_interact(node, call, report):
         driver = node.funcargs.get('driver')
         if driver:
             # Define the directory where screenshots will be saved
-            screenshot_dir = "/Users/rmaru/PycharmProjects/pythonProject/utils/screenshots"
+            screenshot_dir = "/path/to/your/screenshot/directory"
             screenshot_name = f"{node.name}_screenshot.png"
             screenshot_path = os.path.join(screenshot_dir, screenshot_name)
 
@@ -113,24 +97,3 @@ def pytest_exception_interact(node, call, report):
 
             # Attach the saved screenshot to the Allure report
             allure.attach.file(screenshot_path, name=screenshot_name, attachment_type=allure.attachment_type.PNG)
-
-
-if pytest_selenium_available:
-    @pytest.hookimpl(tryfirst=True)
-    def pytest_configure(config):
-        # Add the missing attribute
-        if not hasattr(config, '_variables'):
-            config._variables = {}
-
-        # Your existing logic
-        if hasattr(config, 'getoption'):
-            capabilities = config.getoption("capabilities", {})
-            config._capabilities = capabilities
-
-
-    # Workaround 2: Bypass the problematic function
-    def bypass_function(*args, **kwargs):
-        pass
-
-
-    pytest_selenium.pytest_configure = bypass_function
