@@ -13,19 +13,17 @@ jobs:
     steps:
       - checkout
 
-
+      # Install Google Chrome
       - run:
-          name: Download and install ChromeDriver
+          name: Install Google Chrome
           command: |
-            CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_118.0.5993)
-            wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-            unzip chromedriver_linux64.zip
-            sudo mv chromedriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/chromedriver
-          
-          
+            sudo apt-get update
+            sudo apt-get install -y wget
+            wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt install ./google-chrome-stable_current_amd64.deb
+            echo "Google Chrome installation completed successfully."
 
-          # Upgrade pip
+      # Upgrade pip
       - run:
           name: Upgrade pip
           command: |
@@ -39,6 +37,13 @@ jobs:
             python -m venv venv
             echo "source venv/bin/activate" >> $BASH_ENV
             echo "Virtual environment setup completed successfully."
+
+      # Install webdriver_manager
+      - run:
+          name: Install webdriver_manager
+          command: |
+            pip install webdriver_manager
+            echo "Webdriver Manager installation completed successfully."
 
       # Upgrade pytest-selenium and pytest
       - run:
