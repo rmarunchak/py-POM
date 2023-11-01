@@ -15,12 +15,13 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from utils.url_utils import generate_base_url
 from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def pytest_addoption(parser):
-    """Add browser and capabilities options to pytest command-line."""
+    """Add browser, capabilities, and headless options to pytest command-line."""
     default_browser = os.environ.get('DEFAULT_BROWSER', 'chrome')
     parser.addoption(
         "--browser",
@@ -35,6 +36,12 @@ def pytest_addoption(parser):
         default={},
         help="Specify browser capabilities as a dictionary"
     )
+    parser.addoption(
+        "--headless",
+        action="store_true",
+        default=False,
+        help="Run browser in headless mode"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -45,17 +52,22 @@ def base_url():
 @pytest.fixture(scope="function")
 def driver(request, base_url):
     browser_name = request.config.getoption("--browser")
-    logging.info(f"Initializing {browser_name} browser.")
+    headless = request.config.getoption("--headless")
+    logging.info(f"Initializing {browser_name} browser in {'headless' if headless else 'headed'} mode.")
 
     if browser_name == "chrome":
         chrome_options = ChromeOptions()
         chrome_options.add_argument("--start-maximized")
-        driver_service = ChromeService(ChromeDriverManager().install(), options=chrome_options)
+        if headless:
+            chrome_options.add_argument("--headless")
+        driver_service = ChromeService(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=driver_service, options=chrome_options)
         logging.info("Chrome browser started successfully.")
     elif browser_name == "firefox":
         firefox_options = FirefoxOptions()
         firefox_options.add_argument("--start-maximized")
+        if headless:
+            firefox_options.add_argument("--headless")
         driver_service = FirefoxService(GeckoDriverManager().install())
         driver = webdriver.Firefox(service=driver_service, options=firefox_options)
         logging.info("Firefox browser started successfully.")
