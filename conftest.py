@@ -16,8 +16,18 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from utils.url_utils import generate_base_url
 from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
 
+try:
+    import pytest_selenium
+    from pytest_selenium import pytest_configure
+except ImportError:
+    pytest_selenium = None  # Set pytest_selenium to None if the import fails
+    pytest_selenium_available = False
+else:
+    pytest_selenium_available = True
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def pytest_addoption(parser):
     """Add browser, capabilities, and headless options to pytest command-line."""
@@ -42,9 +52,11 @@ def pytest_addoption(parser):
         help="Run browser in headless mode"
     )
 
+
 @pytest.fixture(scope="session")
 def base_url():
     return generate_base_url(service_type='application')
+
 
 @pytest.fixture(scope="function")
 def driver(request, base_url):
@@ -81,6 +93,7 @@ def driver(request, base_url):
     logging.info(f"Closing {browser_name} browser.")
     driver.quit()
 
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_exception_interact(node, call, report):
     """
@@ -105,3 +118,24 @@ def pytest_exception_interact(node, call, report):
 
             # Attach the saved screenshot to the Allure report
             allure.attach.file(screenshot_path, name=screenshot_name, attachment_type=allure.attachment_type.PNG)
+
+
+if pytest_selenium_available:
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_configure(config):
+        # Add the missing attribute
+        if not hasattr(config, '_variables'):
+            config._variables = {}
+
+        # Your existing logic
+        if hasattr(config, 'getoption'):
+            capabilities = config.getoption("capabilities", {})
+            config._capabilities = capabilities
+
+
+    # Workaround 2: Bypass the problematic function
+    def bypass_function(*args, **kwargs):
+        pass
+
+
+    pytest_selenium.pytest_configure = bypass_function
