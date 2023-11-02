@@ -1,16 +1,17 @@
 version: 2.1
 
-orbs:
-  dotenv: circleci/dotenv@1.0.0
-
 jobs:
   build:
     docker:
       - image: circleci/python:3.8
     steps:
       - checkout
-      - dotenv/load:
-          path: .env
+      - run:
+          name: Load Environment Variables
+          command: |
+            set -a
+            source .env
+            set +a
       - run:
           name: Install Google Chrome
           command: |
