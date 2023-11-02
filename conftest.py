@@ -69,6 +69,9 @@ def driver(request, base_url):
         chrome_options.add_argument("--start-maximized")
         if headless:
             chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--start-maximized")
         driver_service = ChromeService(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=driver_service, options=chrome_options)
         logging.info("Chrome browser started successfully.")
