@@ -6,6 +6,7 @@ import pytest
 import allure
 import logging
 import os
+from dotenv import load_dotenv
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
@@ -15,6 +16,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from utils.url_utils import generate_base_url
 from pages.conftest import home_page, get_started_page, health_equity_page, account_info_page, confirm_page
+
+load_dotenv()
 
 try:
     import pytest_selenium

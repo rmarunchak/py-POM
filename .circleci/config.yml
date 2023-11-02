@@ -1,19 +1,16 @@
 version: 2.1
 
+orbs:
+  dotenv: circleci/dotenv@1.0.0
+
 jobs:
   build:
     docker:
       - image: circleci/python:3.8
-        environment:
-          TEST_ENV: aws
-          APP_TYPE: member
-          SUBDOMAIN: redesign-master
-          CLUSTER: qa
-          DOMAIN: teladoc.io
     steps:
       - checkout
-
-      # Install Google Chrome
+      - dotenv/load:
+          path: .env
       - run:
           name: Install Google Chrome
           command: |
@@ -22,71 +19,52 @@ jobs:
             wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
             sudo apt install ./google-chrome-stable_current_amd64.deb
             echo "Google Chrome installation completed successfully."
-
-      # Upgrade pip
       - run:
           name: Upgrade pip
           command: |
             python -m pip install --upgrade pip
             echo "Pip upgrade completed successfully."
-
-      # Set up a virtual environment
       - run:
           name: Set up virtual environment
           command: |
             python -m venv venv
             echo "source venv/bin/activate" >> $BASH_ENV
             echo "Virtual environment setup completed successfully."
-
-      # Install webdriver_manager
       - run:
           name: Install webdriver_manager
           command: |
             pip install webdriver_manager
             echo "Webdriver Manager installation completed successfully."
-
-      # Upgrade pytest-selenium and pytest
       - run:
           name: Upgrade pytest-selenium and pytest
           command: |
             pip install --upgrade pytest-selenium pytest
             echo "Pytest-selenium and pytest upgrade completed successfully."
-
-      # Explicitly install conflicting packages
       - run:
           name: Install conflicting packages
           command: |
             pip install packaging==20.4 platformdirs==2.0
             echo "Conflicting packages installation completed successfully."
-
-      # Install dependencies from requirements.txt
       - run:
           name: Install dependencies from requirements.txt
           command: |
             pip install -r requirements.txt
             echo "Dependencies installation from requirements.txt completed successfully."
-
       - run:
           name: Upgrade webdriver_manager
           command: |
             python3 -m pip install webdriver-manager --upgrade
             echo "Webdriver Manager upgraded successfully."
-      # Run tests
-
       - run:
           name: Run tests
           command: |
             pytest tests/test_registration.py --alluredir=./results_directory
             echo "Tests run completed successfully."
-
-      # Generate Allure report
       - run:
           name: Generate Allure report
           command: |
             allure generate ./results_directory -o ./allure-report
             echo "Allure report generation completed successfully."
-
-      # Store the Allure report as an artifact
       - store_artifacts:
           path: ./allure-report
           destination: allure-report
