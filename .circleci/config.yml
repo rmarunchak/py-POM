@@ -4,6 +4,9 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.8
+    environment:
+      LT_USERNAME: your_lambda_test_username
+      LT_ACCESS_KEY: your_lambda_test_access_key
     steps:
       - checkout
       - run:
@@ -59,7 +62,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            pytest tests/test_registration.py --alluredir=./results_directory
+            pytest tests/test_registration.py --alluredir=./results_directory --remote
             echo "Tests run completed successfully."
       - run:
           name: Generate Allure report

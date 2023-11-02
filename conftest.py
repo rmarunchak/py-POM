@@ -1,13 +1,10 @@
-"""
-This module contains pytest fixtures for setting up and tearing down test prerequisites.
-"""
-
 import pytest
 import allure
 import logging
 import os
 from dotenv import load_dotenv
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -39,8 +36,8 @@ def pytest_addoption(parser):
         "--browser",
         action="store",
         default=default_browser,
-        choices=["chrome", "firefox"],
-        help="Specify browser to use: chrome or firefox"
+        choices=["chrome", "firefox", "remote"],
+        help="Specify browser to use: chrome, firefox, or remote for LambdaTest"
     )
     parser.addoption(
         "--capabilities",
@@ -54,6 +51,12 @@ def pytest_addoption(parser):
         default=False,
         help="Run browser in headless mode"
     )
+    parser.addoption(
+        "--remote",
+        action="store_true",
+        default=False,
+        help="Run tests on LambdaTest"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -65,30 +68,52 @@ def base_url():
 def driver(request, base_url):
     browser_name = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")
-    logging.info(f"Initializing {browser_name} browser in {'headless' if headless else 'headed'} mode.")
+    run_remote = request.config.getoption("--remote")
 
-    if browser_name == "chrome":
-        chrome_options = ChromeOptions()
-        chrome_options.add_argument("--start-maximized")
-        if headless:
-            chrome_options.add_argument("--headless")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--start-maximized")
-        driver_service = ChromeService(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=driver_service, options=chrome_options)
-        logging.info("Chrome browser started successfully.")
-    elif browser_name == "firefox":
-        firefox_options = FirefoxOptions()
-        firefox_options.add_argument("--start-maximized")
-        if headless:
-            firefox_options.add_argument("--headless")
-        driver_service = FirefoxService(GeckoDriverManager().install())
-        driver = webdriver.Firefox(service=driver_service, options=firefox_options)
-        logging.info("Firefox browser started successfully.")
+    if run_remote:
+        username = os.environ.get("LT_USERNAME")
+        access_key = os.environ.get("LT_ACCESS_KEY")
+        capabilities = {
+            "browserName": os.environ.get("LT_BROWSER_NAME", "chrome"),
+            "version": os.environ.get("LT_BROWSER_VERSION", "latest"),
+            "platform": os.environ.get("LT_PLATFORM_NAME", "Windows 10"),
+            "name": "LambdaTest",
+            "build": "Pytest LambdaTest Integration",
+            "network": True,
+            "video": True,
+            "visual": True,
+            "console": True,
+            "tunnel": False,
+        }
+        driver = webdriver.Remote(
+            command_executor=f"https://{username}:{access_key}@hub.lambdatest.com/wd/hub",
+            desired_capabilities=capabilities
+        )
+        logging.info("Remote WebDriver (LambdaTest) started successfully.")
     else:
-        logging.error(f"Unsupported browser: {browser_name}")
-        raise ValueError(f"Unsupported browser: {browser_name}")
+        logging.info(f"Initializing {browser_name} browser in {'headless' if headless else 'headed'} mode.")
+        if browser_name == "chrome":
+            chrome_options = ChromeOptions()
+            chrome_options.add_argument("--start-maximized")
+            if headless:
+                chrome_options.add_argument("--headless")
+                chrome_options.add_argument("--no-sandbox")
+                chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument("--start-maximized")
+            driver_service = ChromeService(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=driver_service, options=chrome_options)
+            logging.info("Chrome browser started successfully.")
+        elif browser_name == "firefox":
+            firefox_options = FirefoxOptions()
+            firefox_options.add_argument("--start-maximized")
+            if headless:
+                firefox_options.add_argument("--headless")
+            driver_service = FirefoxService(GeckoDriverManager().install())
+            driver = webdriver.Firefox(service=driver_service, options=firefox_options)
+            logging.info("Firefox browser started successfully.")
+        else:
+            logging.error(f"Unsupported browser: {browser_name}")
+            raise ValueError(f"Unsupported browser: {browser_name}")
 
     # Navigate to the base URL after initializing the browser
     print(f"Base URL: {base_url}")
