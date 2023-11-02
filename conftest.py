@@ -19,7 +19,6 @@ from pages.conftest import home_page, get_started_page, health_equity_page, acco
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 def pytest_addoption(parser):
     """Add browser, capabilities, and headless options to pytest command-line."""
     default_browser = os.environ.get('DEFAULT_BROWSER', 'chrome')
@@ -43,11 +42,9 @@ def pytest_addoption(parser):
         help="Run browser in headless mode"
     )
 
-
 @pytest.fixture(scope="session")
 def base_url():
     return generate_base_url(service_type='application')
-
 
 @pytest.fixture(scope="function")
 def driver(request, base_url):
@@ -84,7 +81,6 @@ def driver(request, base_url):
     logging.info(f"Closing {browser_name} browser.")
     driver.quit()
 
-
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_exception_interact(node, call, report):
     """
@@ -96,7 +92,7 @@ def pytest_exception_interact(node, call, report):
         driver = node.funcargs.get('driver')
         if driver:
             # Define the directory where screenshots will be saved
-            screenshot_dir = "/path/to/your/screenshot/directory"
+            screenshot_dir = "/Users/rmaru/PycharmProjects/pythonProject/utils/screenshots"
             screenshot_name = f"{node.name}_screenshot.png"
             screenshot_path = os.path.join(screenshot_dir, screenshot_name)
 
